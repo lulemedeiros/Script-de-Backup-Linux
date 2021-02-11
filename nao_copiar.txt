@@ -1,0 +1,15 @@
+.gnupg
+.gnome
+.bash_history
+.bash_logout
+.dmrc
+.ICEauthority
+.profile
+.sudo_as_admin_successful
+.Xauthority
+.xsession-errors
+.xsession-errors.old
+.esmtp_queue
+.vscode
+.wine
+www.wgmaudiovisual.com.br
