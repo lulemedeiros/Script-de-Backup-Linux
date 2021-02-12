@@ -35,16 +35,18 @@ while : ; do
     figlet -w 150 Script de Backup do Lule
     rsync -avzP --delete --exclude-from=$nao_copiar $o_origem $d_destin
 
-
     echo -e "\n\tÚltimo backup foi concluído em `date +'%d/%m/%Y, às %H:%M:%S'`"
     agora=`date +'%d/%m/%Y, às %H:%M:%S'`
 
-    contador=1800 # Setando os segundos para o próximo backup
-    while [ $contador -ne 0 ]; do # Entrando no loop do contador para o próximo backup
+    segundos=1800 # Setando os segundos para o próximo backup
+    minutos=30 # Setando os minutos, que são equivalentes aos segundos informados acima divididos por 60
+
+    while [ $segundos -ne 0 ]; do # Entrando no loop do contador para o próximo backup
         
-        echo -e "\n\n\tA rotina de backup é executada a cada 30 minutos,\n\tFaltam $contador segundos para o próximo backup.\n\tO último backup foi em: $agora"
+        echo -e "\n\n\tA rotina de backup é executada a cada 30 minutos,\n\tFaltam $minutos minutos ou $segundos segundos para o próximo backup.\n\tO último backup foi em: $agora"
         sleep 1m;
-        ((contador=$contador-60))
+        ((segundos=$segundos-60))
+        ((minutos=$minutos-1))
 
     done
     clear
@@ -52,20 +54,18 @@ while : ; do
     # Pasta deve estar sincronizada, aguardando próximo loop.
     # Fim do código a ser loopado.
     rm $f_lock # Deletando arquivo de trava
-
     #} & # Note o "&" para execução em background.
-
 
   else
 
-    contador=10 # Setando os segundos para o aviso
-    while [ $contador -ne 0 ]; do # Entrando no loop do contador do aviso
+    segundos=10 # Setando os segundos para o aviso
+    while [ $segundos -ne 0 ]; do # Entrando no loop do contador do aviso
 
         clear
         echo -e "\n\n\tVerifique se já existe um backup ativo se não houver, delete o arquivo de trava."
-        echo -e "\n\tSaindo em $contador segundos."
+        echo -e "\n\tSaindo em $segundos segundos."
         sleep 1;
-        ((contador=$contador-1))
+        ((segundos=$segundos-1))
         
     done
     exit 1
