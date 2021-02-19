@@ -1,86 +1,76 @@
 #!/bin/bash
 
-# Dependências opcionais para o script são:
-# figlet, #dnf install -y figlet
-# figlet, #dnf install -y xcowsay
-# figlet, #dnf install -y sl
+set -xueo pipefail
 
-while : ; do
+sudo dnf -y install fedora-workstation-repositories
 
-  # Setando variaveis ...
-  # Usuário, origem e destino da cópia, local do arquivo de trava
-  o_user=$(whoami)
-  o_origem=/home/$o_user/
-  d_destin=/mnt/BACKUP160/Backup-Linux/$o_user/
-  f_lock=/tmp/lockfile
+sudo dnf update -y
 
-  # O que não copiar setado no arquivo txt
-  nao_copiar="nao_copiar.txt" # Neste caso esta no mesmo local do script
+sudo dnf config-manager --set-enabled google-chrome
+sudo dnf -y install google-chrome-stable
+sudo dnf -y install numlockx.x86_64
+sudo dnf -y install remmina
+sudo dnf -y install xpad.x86_64
+sudo dnf -y install htop.x86_64
+sudo dnf -y install git
+sudo dnf -y install sl
+sudo dnf -y install cowsay
+sudo dnf -y install xcowsay.x86_64
+sudo dnf -y install toilet.x86_64
+sudo dnf -y install xrdp
+sudo dnf -y install xorgxrdp
+sudo dnf -y install filezilla.x86_64
+sudo dnf -y install figlet.x86_64
+sudo dnf -y install fish
+sudo dnf -y install gpick.x86_64
+sudo dnf -y install tilix.x86_64
+sudo dnf -y install gnome-software.x86_64
+sudo dnf -y install libreoffice-langpack-pt-BR.x86_64
+sudo dnf -y install libreoffice-icon-theme-papirus.noarch
+#sudo rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+#sudo printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=gitlab.com_paulcarroty_vscodium_repo\nbaseurl=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/repos/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg" |sudo tee -a /etc/yum.repos.d/vscodium.repo
+#sudo dnf -y install codium
 
-  # Configurações do aviso da vaquinha do comando xcowsay
-  conf_xcowsay="--time=4 --cow-size=small --reading-speed=2"
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+sudo dnf check-update
+sudo dnf -y install code
 
-  # Entra em um loop de verificação e avisa se a pasta de destino do backup não for encontrada e sai do script encerrando.
-  if [ ! -d $d_destin ]; then
-    xcowsay $conf_xcowsay " O diretório de destino do backup não foi encontrado! "
-    exit 1
-  fi
+sudo dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf -y install vlc
 
-  # Usa um arquivo de lock para impedir execução simultânea.
-  # Caso a execução leve mais do que sessenta segundos.
-  if [[ ! -e $f_lock ]]; then
+sudo rpm --import https://packagecloud.io/shiftkey/desktop/gpgkey
+sudo sh -c 'echo -e "[shiftkey]\nname=GitHub Desktop\nbaseurl=https://packagecloud.io/shiftkey/desktop/el/7/\$basearch\nenabled=1\ngpgcheck=0\nrepo_gpgcheck=1\ngpgkey=https://packagecloud.io/shiftkey/desktop/gpgkey" > /etc/yum.repos.d/shiftkey-desktop.repo'
+sudo dnf -y install github-desktop
 
-    touch $f_lock
+sudo dnf -y install virt-manager bridge-utils libvirt virt-install qemu-kvm
+sudo dnf -y install virt-top libguestfs-tools
 
-    #{ # Note o "}" para execução em background, se for rodar em segundo plano descomente a linha - INICIO
+sudo dnf -y install -y python3.x86_64 \
+    python-crypto \
+    python-devel \
+    python-dns \
+    python-markdown \
+    python2-gpg \
+    python2-tkinter.x86_64 \
+    python3-tkinter.x86_64 \
+    python3 \
+    python3-crypto \
+    python3-devel \
+    python3-dns \
+    python3-gpg \
+    python3-markdown \
+    python3-ldap3.noarch \
+    python-vlc \
 
-      # Começo do código a ser loopado.
-      # Seta e desmonta a data.
-      sl
-      figlet -w 150 Script de Backup do Lule
+sudo systemctl start xrdp
+sudo systemctl enable xrdp
 
-      ini_bk=`date +'%d/%m/%Y, às %H:%M:%S'`
-      echo -e "\n\tO backup foi iniciado em $ini_bk"
+sudo systemctl start libvirtd
+sudo systemctl enable libvirtd
 
-      rsync -avzP --delete --exclude-from=$nao_copiar $o_origem $d_destin
+sudo firewall-cmd --add-port=3389/tcp --permanent
+sudo firewall-cmd --reload
 
-      fim_bk=`date +'%d/%m/%Y, às %H:%M:%S'`
-      echo -e "\n\tO backup foi iniciado  em $ini_bk"
-      echo -e "\tO backup foi concluído em $fim_bk"
-      
-      segundos=1800 # Setando os segundos para o próximo backup
-      let "minutos = $(( $segundos / 60 ))" # Setando os minutos, que são equivalentes aos segundos informados acima divididos por 60
-
-      while [ $segundos -ne 0 ]; do # Entrando no loop do contador para o próximo backup
-          
-          echo -e "\n\n\tA rotina de backup é executada a cada 30 minutos e faltam \n\t$minutos minutos ou $segundos segundos para o próximo backup.\n\tO último backup foi em: $fim_bk"
-          sleep 1m;
-          ((segundos=$segundos-60))
-          ((minutos=$minutos-1))
-
-      done
-      clear
-
-      # Pasta deve estar sincronizada, aguardando próximo loop.
-      # Fim do código a ser loopado.
-      rm $f_lock # Deletando arquivo da trava
-
-    #} & # Note o "} &" para execução em background, se for rodar em segundo plano descomente a linha - FIM
-
-  else
-
-    segundos=10 # Setando os segundos para o aviso
-    while [ $segundos -ne 0 ]; do # Entrando no loop do contador do aviso
-
-        clear
-        echo -e "\n\n\tVerifique se já existe um backup ativo se não houver, delete o arquivo de trava."
-        echo -e "\n\tSaindo em $segundos segundos."
-        sleep 1;
-        ((segundos=$segundos-1))
-        
-    done
-    exit 1
-
-  fi
-
-done
+sudo dnf -y clean all
