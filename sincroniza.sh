@@ -11,14 +11,14 @@ clear
 f_lock=/tmp/lockfile # Local e arquivo de trava, para não rodar outra rotiva de backup se já houver uma ativa
 
 function saindo {
-    
+
     saindo=3 # Setando os segundos no caso de sair
     while [ $saindo -ne 0 ]; do # Entrando no loop do contador do aviso
 
         echo -e "\t Finalizando o backup em $saindo segundos. "
         sleep 1;
         ((saindo=$saindo-1))
-        
+
     done
     echo -e "\n\t Finalizado o script. Bye \n "
     exit 1
@@ -66,7 +66,7 @@ function backup {
         let "minutos = $(( $segundos / 60 ))" # Setando os minutos, que são equivalentes aos segundos informados acima divididos por 60
 
         while [ $segundos -ne 0 ]; do # Entrando no loop do contador para o próximo backup
-            
+
             echo -e "\n\n\tA rotina de backup é executada a cada 30 minutos e faltam \n\t$minutos minutos ou $segundos segundos para o próximo backup.\n\tO último backup foi em: $fim_bk"
             sleep 1m;
             ((segundos=$segundos-60))
@@ -85,13 +85,13 @@ function backup {
 
 
 if [[ ! -e $f_lock ]]; then
-    
+
     clear
     echo -e "\n\t Nenhum arquivo de trava encontrado, \n\t Iniciando a rotina de backup. \n "
     backup # Chama a função/rotina de backup
 
 else
-    
+
     clear
     echo -e "\n
             Atenção, arquivo de trava encontrado em: \n
@@ -112,7 +112,7 @@ else
 
             # Dois valores de caso são declarados aqui para correspondência
             "Sim")
-            
+
                 clear
                 echo -e "\n\t Você digitou $op, deletando o aquivo de trava "
                 rm "$f_lock" # Deletando arquivo da trava
@@ -121,6 +121,7 @@ else
                 sleep 2
                 backup
                 #break
+
             ;;
 
             # Três valores de caso são declarados aqui para correspondência
