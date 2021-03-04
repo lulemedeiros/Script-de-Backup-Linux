@@ -28,6 +28,7 @@ function saindo {
 function backup {
 
     while : ; do
+        # Começo do código a ser loopado.
         # Setando variaveis ...
         o_user=$(whoami)
         o_origem=/home/$o_user/ # Set aqui a origem dos arquivos do backup
@@ -48,7 +49,6 @@ function backup {
 
         touch $f_lock # Cria o arquivo de trava
 
-        # Começo do código a ser loopado.
         # Seta e desmonta a data.
         sl # Chama o trem
         figlet -w 150 Script de Backup do Lule
