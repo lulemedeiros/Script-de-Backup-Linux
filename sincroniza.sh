@@ -110,7 +110,7 @@ else
         clear
         case $op in
 
-            # Dois valores de caso são declarados aqui para correspondência
+            # O sim é declarado aqui para correspondência
             "Sim")
 
                 clear
@@ -124,7 +124,7 @@ else
 
             ;;
 
-            # Três valores de caso são declarados aqui para correspondência
+            # O Não é declarado aqui para correspondência
             "Não")
 
                 clear
