@@ -103,7 +103,7 @@ else
 
     echo -e " Escolha uma das opções abaixo, '1' para Sim e deletar a \n trava e continuar o backup ou '2' para Não terminando o \n script. \n "
 
-    # Nomes de sistemas operacionais são usados aqui como fonte de dados
+    # Colocando duas opções para o array, Sim e Não
     select op in Sim Não
 
     do
